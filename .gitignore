@@ -1,4 +1,6 @@
 dataset/
+testData/
+trainingData/
 recognizer/
 env/
 .Python
