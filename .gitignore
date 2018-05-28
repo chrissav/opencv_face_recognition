@@ -1,0 +1,6 @@
+dataset/
+recognizer/
+env/
+.Python
+pip-selfcheck.json
+database.db
