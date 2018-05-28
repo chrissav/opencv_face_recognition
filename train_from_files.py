@@ -2,8 +2,7 @@
 DESCRIPTION:    This script will look into the images_path directory and expect a subdirectory for
                 each user. The directory will be trated as the name. Contents of each subdirectory
                 should be images of the individual. Each image will be converted to grayscale and
-                copied over to dataset directory. Database will be populated with names. Collected
-                data is then trained on and the output recorded to rcognizer directory.
+                copied over to dataset directory. Database will be populated with names.
 '''
 
 
@@ -70,7 +69,9 @@ RETURN:     Nothing.
 '''
 def save_grayscale_img(source, save_name):
     grayscale = cv2.imread(source, cv2.IMREAD_GRAYSCALE)
-    cv2.imwrite('dataset/' + save_name + '.jpg', grayscale)
+    faces = face_cascade.detectMultiScale(grayscale, 1.3, 5)
+    for (x,y,w,h) in faces:
+        cv2.imwrite('dataset/' + save_name + '.jpg', grayscale[y:y+h,x:x+w])
 
 def get_images_with_id(path):
   imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
@@ -102,6 +103,9 @@ dataset_path = 'dataset'
 
 #Recognizer used
 recognizer = cv2.face.LBPHFaceRecognizer_create()
+
+#Cascade file
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 #Make sure we have the dataset directory if not create one
 if not os.path.exists('./dataset'):
