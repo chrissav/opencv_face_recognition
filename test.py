@@ -1,5 +1,5 @@
 import cv2
-import numpy as np 
+import numpy as np
 import sqlite3
 import os
 import argparse
@@ -9,7 +9,7 @@ def runTest(testData='./testData'):
   results = []
 
   for imagePath in imagePaths:
-    
+
     img = cv2.imread(imagePath)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
@@ -29,6 +29,25 @@ def runTest(testData='./testData'):
   print('------------')
   print("Average confidence score: %s" % (sum(results) / (len(results))))
 
+def createRecognizer(t):
+    rczr = None
+    global resize
+    if t.lower() == 'lbph':
+        rczr =  cv2.face.LBPHFaceRecognizer_create()
+        resize=False
+    elif t.lower() == 'fisher':
+        rczr = cv2.face.FisherFaceRecognizer_create()
+        resize=True
+    elif t.lower() == 'eigen':
+        rczr =  cv2.face.EigenFaceRecognizer_create()
+        resize=True
+    elif t.lower() == 'bif':
+        rczr = cv2.face.BIF_create()
+    else:
+        rczr =  cv2.face.LBPHFaceRecognizer_create()
+        resize=False
+
+    return rczr
 
 def main():
   parser = argparse.ArgumentParser(description='Runs detector against testdata')
@@ -36,8 +55,12 @@ def main():
     help="Path to test data directory.  Default: './testData'")
   parser.add_argument('--cascade-classifier',
     help="Path to cascade classifier to use.  Default: 'haarcascade_frontalface_default.xml'")
-  parser.add_argument('--recognizer-algorithm',
-    help="Algorithm to use for facial recognition prediction'")
+  parser.add_argument('--learning-algorithm',
+      help="Learning Algorithm used. Options:'lbph','fisher','eigen','bif'. Default: 'lbph'")
+  parser.add_argument('--resize-width',
+      help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
+  parser.add_argument('--resize-height',
+      help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
 
   args = parser.parse_args()
 
@@ -50,11 +73,21 @@ def main():
       print("Please train the data first")
       exit(0)
 
+  #Cascade file
+  classifierFile = './cascadeClassifiers/haarcascade_frontalface_default.xml'
+  if args.cascade_classifier:
+      classifierFile = args.cascade_classifier
+
   global face_cascade
-  face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+  face_cascade = cv2.CascadeClassifier(classifierFile)
 
   global recognizer
-  recognizer = cv2.face.LBPHFaceRecognizer_create()
+  if args.learning_algorithm:
+      recognizer = createRecognizer(args.learning_algorithm)
+  else:
+      recognizer = cv2.face.LBPHFaceRecognizer_create()
+
   recognizer.read(fname)
 
   if args.test_data:
