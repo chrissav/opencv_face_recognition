@@ -22,7 +22,6 @@ INPUT:      Path to root directory of images.
 RETURN:     Dict of paths.
 '''
 def get_people(path):
-
     people = {}
 
     for path, subdirs, files in os.walk(path):
@@ -85,7 +84,6 @@ def save_grayscale_img(source, save_name, destinationPath):
             im = cv2.resize(im,resizeSize)
         cv2.imwrite(name, im)
 
-
 def get_images_with_id(path):
   imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
   faces = []
@@ -97,6 +95,7 @@ def get_images_with_id(path):
     faces.append(faceNp)
     IDs.append(ID)
     cv2.imshow("Training..." ,faceNp)
+
     cv2.waitKey(10)
   return np.array(IDs), faces
 
@@ -227,3 +226,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
