@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-path = 'dataset'
+path = '../data/trainingData'
 if not os.path.exists('./recognizer'):
     os.makedirs('./recognizer')
 

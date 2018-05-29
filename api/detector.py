@@ -3,7 +3,7 @@ import numpy as np
 import sqlite3
 import os
 
-conn = sqlite3.connect('database.db')
+conn = sqlite3.connect('../data/database.db')
 c = conn.cursor()
 
 fname = "recognizer/trainingData.yml"

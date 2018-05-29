@@ -41,7 +41,7 @@ def main():
 
   args = parser.parse_args()
 
-  conn = sqlite3.connect('database.db')
+  conn = sqlite3.connect('../data/database.db')
   global c
   c = conn.cursor()
 
@@ -51,7 +51,7 @@ def main():
       exit(0)
 
   global face_cascade
-  face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+  face_cascade = cv2.CascadeClassifier('../data/cascade_classifiers/haarcascade_frontalface_default.xml')
 
   global recognizer
   recognizer = cv2.face.LBPHFaceRecognizer_create()
