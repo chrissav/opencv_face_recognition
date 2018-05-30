@@ -85,7 +85,6 @@ def save_grayscale_img(source, save_name, destinationPath):
             im = cv2.resize(im,resizeSize)
         cv2.imwrite(name, im)
 
-
 def get_images_with_id(path):
   imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
   faces = []
@@ -134,7 +133,7 @@ recognizer = None
 resizeSize = None
 def main():
     parser = argparse.ArgumentParser(description='Runs detector against testdata')
-    parser.add_argument('--test-data',
+    parser.add_argument('--training-data',
         help="Path to test data directory.  Default: './originalDataSet'")
     parser.add_argument('--dataset-path',
         help="Path to store the converted dataset  Default: './processedDataSet'")
@@ -145,9 +144,9 @@ def main():
     parser.add_argument('--clear-data',
         help="Clears the data being run.")
     parser.add_argument('--resize-width',
-        help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
+        help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.", type=int)
     parser.add_argument('--resize-height',
-        help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
+        help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.", type=int)
 
     args = parser.parse_args()
 
@@ -167,12 +166,14 @@ def main():
     if args.learning_algorithm:
         recognizer = createRecognizer(args.learning_algorithm)
     else:
+        global resize
+        resize=False
         recognizer = cv2.face.LBPHFaceRecognizer_create()
 
     #Paths
     images_path = './originalDataSet'
-    if args.test_data:
-        images_path = args.test_data
+    if args.training_data:
+        images_path = args.training_data
 
     dataset_path = './processedDataSet'
     if args.dataset_path:
@@ -184,7 +185,8 @@ def main():
         cursor.execute('delete from users')
         connection.commit()
         connection.close()
-        shutil.rmtree(os.path.abspath(dataset_path))
+        if os.path.exists(os.path.abspath(dataset_path)):
+            shutil.rmtree(os.path.abspath(dataset_path))
 
     #Cascade file
     classifierFile = './cascadeClassifiers/haarcascade_frontalface_default.xml'
