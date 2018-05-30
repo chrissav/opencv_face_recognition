@@ -22,7 +22,6 @@ INPUT:      Path to root directory of images.
 RETURN:     Dict of paths.
 '''
 def get_people(path):
-
     people = {}
 
     for path, subdirs, files in os.walk(path):
@@ -96,6 +95,7 @@ def get_images_with_id(path):
     faces.append(faceNp)
     IDs.append(ID)
     cv2.imshow("Training..." ,faceNp)
+
     cv2.waitKey(10)
   return np.array(IDs), faces
 
@@ -229,3 +229,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
