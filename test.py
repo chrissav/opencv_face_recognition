@@ -7,30 +7,41 @@ import argparse
 def runTest(testData='./testData'):
   imagePaths = [os.path.join(testData,f) for f in os.listdir(testData)]
   results = []
+  (total, correct) = (0,0)
 
   for imagePath in imagePaths:
+    if imagePath.endswith('.jpg'):
+      img = cv2.imread(imagePath, cv2.IMREAD_GRAYSCALE)
+      faces = face_cascade.detectMultiScale(img, 1.3, 5)
 
-    img = cv2.imread(imagePath)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+      for (x,y,w,h) in faces:
+        total += 1
 
-    for (x,y,w,h) in faces:
-      im = gray[y:y+h,x:x+w]
-      if resize:
-          im = cv2.resize(im,(resize_size))
-      ids,conf = recognizer.predict(im)
-      c.execute("select name from users where id = (?);", (ids,))
-      result = c.fetchall()
-      name = result[0][0]
+        im = img[y:y+h,x:x+w]
+        if resize:
+            im = cv2.resize(im,(resize_size))
+        ids,conf = recognizer.predict(im)
+        c.execute("select name from users where id = (?);", (ids,))
+        result = c.fetchall()
+        name = result[0][0]
 
-      if conf < 50:
+        #if conf < 50:
+        if error_check:
+          # get user id from imagePath.  requires test data to have user id in name.
+          actual_name = imagePath.split('/')[-1].split('.')[0]
+          if str(actual_name) == str(name):
+            correct += 1
+            print('match!', end=" ")
+          else:
+            print('error!', end=" ")
         print("Predicted User %s : %s" %(ids, conf))
-      else:
-        print("match not strong enough")
+        #else:
+        #  print("match not strong enough")
 
-      results.append(conf)
+        results.append(conf)
   print('------------')
   print("Average confidence score: %s" % (sum(results) / (len(results))))
+  print("Average accuracy score: %s%%" %((correct / total) * 100))
 
 def createRecognizer(t):
     rczr = None
@@ -64,8 +75,17 @@ def main():
       help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
   parser.add_argument('--resize-height',
       help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
+  parser.add_argument('--error-check',
+      help="Flag to run error checking",
+      action='store_true')
 
   args = parser.parse_args()
+
+  global error_check
+  if args.error_check:
+    error_check = True
+  else:
+    error_check = False
 
   width = 100
   if args.resize_width:
