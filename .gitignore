@@ -6,3 +6,7 @@ env/
 .Python
 pip-selfcheck.json
 database.db
+include/
+bin/
+lib/
+.vscode
