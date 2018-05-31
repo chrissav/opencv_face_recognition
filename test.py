@@ -15,7 +15,10 @@ def runTest(testData='./testData'):
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
     for (x,y,w,h) in faces:
-      ids,conf = recognizer.predict(gray[y:y+h,x:x+w])
+      im = gray[y:y+h,x:x+w]
+      if resize:
+          im = cv2.resize(im,(resize_size))
+      ids,conf = recognizer.predict(im)
       c.execute("select name from users where id = (?);", (ids,))
       result = c.fetchall()
       name = result[0][0]
@@ -63,6 +66,17 @@ def main():
       help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
 
   args = parser.parse_args()
+
+  width = 100
+  if args.resize_width:
+      width = args.resize_width
+
+  height = 100
+  if args.resize_height:
+      width = args.resize_height
+
+  global resize_size
+  resize_size = (width,height)
 
   conn = sqlite3.connect('database.db')
   global c
