@@ -53,8 +53,6 @@ def createRecognizer(t):
     elif t.lower() == 'eigen':
         rczr =  cv2.face.EigenFaceRecognizer_create()
         resize=True
-    elif t.lower() == 'bif':
-        rczr = cv2.face.BIF_create()
     else:
         rczr =  cv2.face.LBPHFaceRecognizer_create()
         resize=False
@@ -68,7 +66,7 @@ def main():
   parser.add_argument('--cascade-classifier',
     help="Path to cascade classifier to use.  Default: 'haarcascade_frontalface_default.xml'")
   parser.add_argument('--learning-algorithm',
-      help="Learning Algorithm used. Options:'lbph','fisher','eigen','bif'. Default: 'lbph'")
+      help="Learning Algorithm used. Options:'lbph','fisher','eigen'. Default: 'lbph'")
   parser.add_argument('--resize-width',
       help="Integer which all facial images will be resized to. Only used if the learning algorithm needs it.")
   parser.add_argument('--resize-height',
