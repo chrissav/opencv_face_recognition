@@ -25,7 +25,6 @@ def runTest(testData='./testData'):
         result = c.fetchall()
         name = result[0][0]
 
-        #if conf < 50:
         if error_check:
           # get user id from imagePath.  requires test data to have user id in name.
           actual_name = imagePath.split('/')[-1].split('.')[0]
@@ -34,14 +33,13 @@ def runTest(testData='./testData'):
             print('match!', end=" ")
           else:
             print('error!', end=" ")
-        print("Predicted User %s : %s" %(ids, conf))
-        #else:
-        #  print("match not strong enough")
+        print("Predicted User %s : %s" %(name, conf))
 
         results.append(conf)
   print('------------')
   print("Average confidence score: %s" % (sum(results) / (len(results))))
-  print("Average accuracy score: %s%%" %((correct / total) * 100))
+  if error_check:
+    print("Average accuracy score: %s%%" %((correct / total) * 100))
 
 def createRecognizer(t):
     rczr = None

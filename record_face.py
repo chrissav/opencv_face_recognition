@@ -9,7 +9,7 @@ if not os.path.exists('./dataset'):
 
 c = conn.cursor()
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('cascadeClassifiers/haarcascade_frontalface_default.xml')
 
 cap = cv2.VideoCapture(0)
 

@@ -11,7 +11,7 @@ if not os.path.isfile(fname):
     print("Please train the data first")
     exit(0)
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('cascadeClassifiers/haarcascade_frontalface_default.xml')
 cap = cv2.VideoCapture(0)
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read(fname)
